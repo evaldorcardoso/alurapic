@@ -1,10 +1,13 @@
 <template>
   <div class="body">
     <h1 class="centered">{{ title }}</h1>
+
+    <input type="search" class="filter" @input="filter = $event.target.value" placeholder="filtre pelo título da foto">
+
     <ul class="list-photos">
-      <li class="list-photos-item" v-for="photo of photos">
+      <li class="list-photos-item" v-for="photo of filteredPhotos">
         <my-panel :title="photo.titulo">
-            <img class="img-responsive" :src="photo.url" :alt="photo.titulo">
+          <image-responsive :url=photo.url :title=photo.titulo></image-responsive>
         </my-panel>        
       </li>
     </ul>
@@ -13,15 +16,28 @@
 
 <script>
 import Panel from './components/shared/panel/Panel.vue';
+import ImageResponsive from './components/shared/image-responsive/ImageResponsive.vue';
 
 export default {
   components: {
-    'my-panel' : Panel
+    'my-panel' : Panel,
+    'image-responsive' : ImageResponsive
   },
   data () {
     return {
       title: 'Alurapic',
-      photos: []      
+      photos: [],
+      filter : ''    
+    }
+  },
+  computed: {
+    filteredPhotos() {
+      if(this.filter){
+        let exp = new RegExp(this.filter.trim(), 'i');
+        return this.photos.filter(photo => exp.test(photo.titulo));
+      }else{
+        return this.photos;
+      }
     }
   },
   created() {
@@ -33,6 +49,11 @@ export default {
 </script>
 
 <style>
+  .filter {
+    display: block;
+    width: 100%;
+  }
+  
   .body{
     font-family: "Helvetica",sans-serif;
     width: 96%;

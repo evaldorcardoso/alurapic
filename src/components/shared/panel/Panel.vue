@@ -1,14 +1,22 @@
 <template>
     <div class="panel">
-        <h2 class="panel-title">{{ title }}</h2>
-        <slot class="panel-body">
-        </slot>
+        <h2 class="panel-title" @dblclick="visible = !visible">{{ title }}</h2>
+        <transition name="panel-fade">
+            <div class="panel-body" v-show="visible">
+                <slot></slot>
+            </div>
+        </transition>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['title']
+    props: ['title'],
+    data() {
+        return {
+            visible : true
+        }
+    }
 }
 </script>
 
@@ -36,6 +44,14 @@ export default {
 
   *.box-shadow{
     box-shadow: 5px 5px 5px;
+  }
+
+  .panel-fade-enter, .panel-fade-leave-active {
+    opacity: 0
+  }
+
+  .panel-fade-enter-active, .panel-fade-leave-active {
+    transition: opacity .4s
   }
 
 </style>
