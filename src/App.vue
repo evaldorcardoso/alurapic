@@ -1,80 +1,40 @@
 <template>
   <div class="body">
-    <h1 class="centered">{{ title }}</h1>
 
-    <input type="search" class="filter" @input="filter = $event.target.value" placeholder="filtre pelo título da foto">
+    <my-menu :routes="routes"/>
 
-    <ul class="list-photos">
-      <li class="list-photos-item" v-for="photo of filteredPhotos">
-        <my-panel :title="photo.titulo">
-          <image-responsive :url=photo.url :title=photo.titulo></image-responsive>
-        </my-panel>        
-      </li>
-    </ul>
+    <transition name="page">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
 <script>
-import Panel from './components/shared/panel/Panel.vue';
-import ImageResponsive from './components/shared/image-responsive/ImageResponsive.vue';
+import { routes } from './routes';
+import Menu from './components/shared/menu/Menu.vue';
 
 export default {
   components: {
-    'my-panel' : Panel,
-    'image-responsive' : ImageResponsive
+    'my-menu': Menu
   },
-  data () {
-    return {
-      title: 'Alurapic',
-      photos: [],
-      filter : ''    
-    }
-  },
-  computed: {
-    filteredPhotos() {
-      if(this.filter){
-        let exp = new RegExp(this.filter.trim(), 'i');
-        return this.photos.filter(photo => exp.test(photo.titulo));
-      }else{
-        return this.photos;
-      }
-    }
-  },
-  created() {
-    this.$http.get('http://localhost:3000/v1/fotos')
-      .then(res => res.json())
-      .then(photos => this.photos = photos, err => console.log(err));
+  data() {
+    return { routes }
   }
 }
 </script>
 
 <style>
-  .filter {
-    display: block;
-    width: 100%;
-  }
-  
   .body{
     font-family: "Helvetica",sans-serif;
     width: 96%;
     margin: 0 auto;
   }
 
-  .centered{
-    text-align: center;
+  .page-enter, .page-leave-active {
+    opacity: 0
   }
 
-  .list-photos{
-    list-style: none;
+  .page-enter-active, .page-leave-active {
+    transition: opacity .4s
   }
-
-  .list-photos .list-photos-item{
-    display: inline-block;
-  }
-
-  .img-responsive{
-    max-width: 100%;
-    height: auto;
-  }
-
 </style>
