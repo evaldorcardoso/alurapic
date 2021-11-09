@@ -7,7 +7,7 @@
     <ul class="list-photos">
       <li class="list-photos-item" v-for="photo of filteredPhotos">
         <my-panel :title="photo.titulo">
-          <image-responsive :url=photo.url :title=photo.titulo />
+          <image-responsive v-meu-transform:scale.animate="2" :url=photo.url :title=photo.titulo />
           <my-button 
             caption="Remover" 
             type="button" 
@@ -24,12 +24,16 @@
 import Panel from '../shared/panel/Panel.vue';
 import ImageResponsive from '../shared/image-responsive/ImageResponsive.vue';
 import Button from '../shared/button/Button.vue';
+import Transform from '../../directives/Transform';
 
 export default {
   components: {
     'my-panel': Panel,
     'image-responsive': ImageResponsive,
     'my-button': Button
+  },
+  directives: {
+    'meu-transform': Transform
   },
   methods: {
     remove(photo) {

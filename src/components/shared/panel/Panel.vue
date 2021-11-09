@@ -54,4 +54,8 @@ export default {
     transition: opacity .4s
   }
 
+  .panel-body{
+    overflow: hidden;
+  }
+
 </style>
