@@ -22,7 +22,7 @@
 
       <div class="centered">
         <my-button caption="GRAVAR" type="submit"/>
-        <router-link to="/"><my-button caption="VOLTAR" type="button"/></router-link>
+        <router-link :to="{ name: 'home' }"><my-button caption="VOLTAR" type="button"/></router-link>
       </div>
 
     </form>
@@ -34,6 +34,7 @@
 import ImageResponsive from '../shared/image-responsive/ImageResponsive.vue'
 import Button from '../shared/button/Button.vue';
 import Photo from '../../domain/photo/Photo';
+import PhotoService from '../../domain/photo/PhotoService';
 
 export default {
 
@@ -51,10 +52,15 @@ export default {
   },
   methods: {
       save() {
-          this.$http
-            .post('http://localhost:3000/v1/fotos', this.photo)
-            .then(() => this.photo = new Photo(), err => console.log(err));
+
+        this.service
+          .register(this.photo)
+          .then(() => this.photo = new Photo(), err => console.log(err));
+
       }
+  },
+  created() {
+    this.service = new PhotoService(this.$resource);
   }
 }
 

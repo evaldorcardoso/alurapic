@@ -2,6 +2,8 @@
   <div>
     <h1 class="centered">{{ title }}</h1>
 
+    <p v-show="message" class="centered">{{ message }}</p>
+
     <input type="search" class="filter" @input="filter = $event.target.value" placeholder="filtre pelo título da foto">
 
     <ul class="list-photos">
@@ -25,6 +27,7 @@ import Panel from '../shared/panel/Panel.vue';
 import ImageResponsive from '../shared/image-responsive/ImageResponsive.vue';
 import Button from '../shared/button/Button.vue';
 import Transform from '../../directives/Transform';
+import PhotoService from '../../domain/photo/PhotoService';
 
 export default {
   components: {
@@ -36,15 +39,26 @@ export default {
     'meu-transform': Transform
   },
   methods: {
-    remove(photo) {
-      alert('Foto "' + photo.titulo+ '" removida com sucesso!');
+    remove(photo) {      
+
+      this.service
+        .delete(photo._id)
+        .then(
+          () => {
+            let index = this.photos.indexOf(photo);
+            this.photos.splice(index, 1);
+            this.message = 'Foto removida com sucesso!';    
+          },
+          err => { this.message = 'Erro ao remover a foto!'; }
+        );
     }
   },
   data () {
     return {
       title: 'Alurapic',
       photos: [],
-      filter : ''    
+      filter : '',
+      message: '',    
     }
   },
   computed: {
@@ -58,9 +72,13 @@ export default {
     }
   },
   created() {
-    this.$http.get('http://localhost:3000/v1/fotos')
-      .then(res => res.json())
+
+    this.service = new PhotoService(this.$resource);
+
+    this.service
+      .list()
       .then(photos => this.photos = photos, err => console.log(err));
+    
   }
 }
 </script>
