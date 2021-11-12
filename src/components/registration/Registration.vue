@@ -4,29 +4,37 @@
     <h1 v-else class="centered">Inclusão</h1>
     <h2 class="centered">{{ photo.title }}</h2>
 
-    <form @submit.prevent="save()">
-      <div class="control">
-        <label for="title">TÍTULO</label>
-        <input v-model.lazy="photo.title" id="title" autocomplete="off">
-      </div>
+    <validationObserver v-slot="{ handleSubmit }">
+      <form @submit.prevent="handleSubmit(save)">
+        <div class="control">
+          <validation-provider rules="required|minmax:3,20" :bails="false" v-slot="{ errors }">          
+            <label for="title">TÍTULO</label>
+            <input name="title" v-model.lazy="photo.title" id="title" autocomplete="off">
+            <span class="error" >{{ errors[0] }}</span>
+          </validation-provider>
+        </div>
 
-      <div class="control">
-        <label for="url">URL</label>
-        <input v-model.lazy="photo.url" id="url" autocomplete="off">
-        <image-responsive :url="photo.url" :title="photo.title" v-show="photo.url"/>
-      </div>
+        <div class="control">
+          <label for="url">URL</label>
+          <validation-provider rules="required" v-slot="{ errors }">                    
+            <input v-model.lazy="photo.url" id="url" autocomplete="off">
+            <span class="error" >{{ errors[0] }}</span>
+          </validation-provider>
+          <image-responsive :url="photo.url" :title="photo.title" v-show="photo.url"/>
+        </div>
 
-      <div class="control">
-        <label for="description">DESCRIÇÃO</label>
-        <textarea v-model="photo.description" id="description" autocomplete="off"></textarea>
-      </div>
+        <div class="control">
+          <label for="description">DESCRIÇÃO</label>
+          <textarea v-model="photo.description" id="description" autocomplete="off"></textarea>
+        </div>
 
-      <div class="centered">
-        <my-button caption="GRAVAR" type="submit"/>
-        <router-link :to="{ name: 'home' }"><my-button caption="VOLTAR" type="button"/></router-link>
-      </div>
+        <div class="centered">
+          <my-button caption="GRAVAR" type="submit"/>
+          <router-link :to="{ name: 'home' }"><my-button caption="VOLTAR" type="button"/></router-link>
+        </div>
 
-    </form>
+      </form>
+    </validationObserver>
   </div>
 </template>
 
@@ -53,10 +61,8 @@ export default {
       }
   },
   methods: {
-      save() {
-
-        this.service
-          .register(this.photo)
+      save() {        
+        this.service.register(this.photo)
           .then(() => {
             if(this.id) this.$router.push({ name: 'home' });            
             this.photo = new Photo()
@@ -104,6 +110,10 @@ export default {
 
   .centered {
     text-align: center;
+  }
+
+  .error {
+    color: red;
   }
 
 </style>
