@@ -10,6 +10,9 @@
       <li class="list-photos-item" v-for="photo of filteredPhotos">
         <my-panel :title="photo.titulo">
           <image-responsive v-meu-transform:scale.animate="2" :url=photo.url :title=photo.titulo />
+          <router-link :to="{ name: 'edit', params: { id: photo._id } }">
+            <my-button caption="Alterar" type="button"/>
+          </router-link>
           <my-button 
             caption="Remover" 
             type="button" 
@@ -49,7 +52,7 @@ export default {
             this.photos.splice(index, 1);
             this.message = 'Foto removida com sucesso!';    
           },
-          err => { this.message = 'Erro ao remover a foto!'; }
+          err => { this.message = err.message; }
         );
     }
   },
@@ -77,8 +80,10 @@ export default {
 
     this.service
       .list()
-      .then(photos => this.photos = photos, err => console.log(err));
-    
+      .then(photos => this.photos = photos, err => { 
+        console.log(err);
+        this.message = err.message;
+      });
   }
 }
 </script>

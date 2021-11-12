@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h1 class="centered">Cadastro</h1>
+    <h1 v-if="photo._id" class="centered">Alteração</h1>
+    <h1 v-else class="centered">Inclusão</h1>
     <h2 class="centered">{{ photo.title }}</h2>
 
     <form @submit.prevent="save()">
@@ -46,7 +47,8 @@ export default {
   data() {
       return {
 
-        photo: new Photo()
+        photo: new Photo(),
+        id: this.$route.params.id
 
       }
   },
@@ -55,12 +57,26 @@ export default {
 
         this.service
           .register(this.photo)
-          .then(() => this.photo = new Photo(), err => console.log(err));
-
+          .then(() => {
+            if(this.id) this.$router.push({ name: 'home' });            
+            this.photo = new Photo()
+          },
+          err => console.log(err));          
       }
   },
   created() {
     this.service = new PhotoService(this.$resource);
+
+    if(this.id) {
+      this.service
+        .get(this.id)
+        .then(photo => { 
+            this.photo._id = photo._id;
+            this.photo.title = photo.titulo;
+            this.photo.url = photo.url;
+            this.photo.description = photo.descricao;
+          });
+    }
   }
 }
 
