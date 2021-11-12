@@ -1,5 +1,6 @@
 import Home from './components/home/Home.vue';
-import Registration from './components/registration/Registration.vue';
+const Registration = () => System.import('./components/registration/Registration.vue');
+
 
 export const routes = [
     { path: '', name: 'home', component: Home, title: "Home", menu: true },
