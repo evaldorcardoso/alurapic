@@ -1,13 +1,14 @@
 <template>
   <div>
     <h1 class="centered">{{ title }}</h1>
+    <!-- <img src="/static/teste.png"> -->
 
     <p v-show="message" class="centered">{{ message }}</p>
 
     <input type="search" class="filter" @input="filter = $event.target.value" placeholder="filtre pelo título da foto">
 
     <ul class="list-photos">
-      <li class="list-photos-item" v-for="photo of filteredPhotos">
+      <li class="list-photos-item" v-for="photo of filteredPhotos" :key="photo._id">
         <my-panel :title="photo.titulo">
           <image-responsive v-meu-transform:scale.animate="2" :url=photo.url :title=photo.titulo />
           <router-link :to="{ name: 'edit', params: { id: photo._id } }">
